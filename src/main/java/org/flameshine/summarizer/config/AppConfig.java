@@ -1,27 +1,22 @@
 package org.flameshine.summarizer.config;
 
-import java.util.List;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.typesafe.config.ConfigFactory;
 
+import org.flameshine.summarizer.util.ObjectMapperFactory;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record AppConfig(
     Telegram telegram,
     OpenAI openAi,
     Analytics analytics
 ) {
 
-    public static AppConfig load() {
-        var config = ConfigFactory.load();
-        var mapper = new ObjectMapper();
-        return mapper.convertValue(config.root().unwrapped(), AppConfig.class);
-    }
-
     public record Telegram(
         int apiId,
         String apiHash,
         String phoneNumber,
-        List<String> groups
+        String sessionDir
     ) {}
 
     public record OpenAI(
@@ -32,7 +27,12 @@ public record AppConfig(
 
     public record Analytics(
         int maxMessagesCount,
-        int minMessagesPerTopic,
-        List<String> filteredWords
+        int minMessagesPerTopic
     ) {}
+
+    public static AppConfig load() {
+        var config = ConfigFactory.load();
+        var mapper = ObjectMapperFactory.get();
+        return mapper.convertValue(config.root().unwrapped(), AppConfig.class);
+    }
 }

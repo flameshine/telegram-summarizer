@@ -4,7 +4,7 @@ import picocli.CommandLine;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String... args) {
         var exit = new CommandLine(new AnalyzeCommand()).execute(args);
         System.exit(exit);
     }
